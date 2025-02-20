@@ -1,42 +1,42 @@
 import pygame
-import datetime
+import time
 
 
 class MickeyClock:
-    
-    def __init__(self, screen, center, hand_image_path):
-       
+
+    def __init__(self, screen, width, height):
         self.screen = screen
-        self.center = center
+        self.w = width
+        self.h = height
+        self.center = (width // 2, height // 2)
 
-        self.hand_original = pygame.image.load(hand_image_path).convert_alpha()
+        # Загружаем руки
+        self.mh = pygame.image.load("images/right_hand.png").convert_alpha()
+        self.sh = pygame.image.load("images/left_hand.png").convert_alpha()
 
-        self.hand_original = pygame.transform.scale(self.hand_original, (40, 120))
+        # Масштабируем
+        self.mh = pygame.transform.scale(self.mh, (35, 170))
+        self.sh = pygame.transform.scale(self.sh, (35, 170))
 
-    def get_angle(self, value, max_value):
-       
-        return -(value / max_value) * 360
-
-    def draw_hand(self, angle, color_offset=0):
-      
-        rotated = pygame.transform.rotate(self.hand_original, angle)
-
-     
-        rect = rotated.get_rect(center=self.center)
-
-        self.screen.blit(rotated, rect)
+    def rab(self, image, angle, pos):
+        """
+        Вращает изображение и рисует с центром в pos.
+        angle = -6 * value (360 / 60 = 6 градусов за единицу)
+        минус = по часовой стрелке
+        """
+        ri = pygame.transform.rotate(image, angle)
+        nr = ri.get_rect(center=pos)
+        self.screen.blit(ri, nr.topleft)
 
     def draw(self):
-      
-        now = datetime.datetime.now()
-        minutes = now.minute   # 0–59
-        seconds = now.second   # 0–59
+        ct = time.localtime()
+        m = ct.tm_min
+        s = ct.tm_sec
 
-        minute_angle = self.get_angle(minutes, 60)
-        second_angle = self.get_angle(seconds, 60)
+        mg = -6 * m
+        sg = -6 * s
 
-      
-        self.draw_hand(minute_angle)   
-        self.draw_hand(second_angle)   
+        self.rab(self.mh, mg, self.center)
+        self.rab(self.sh, sg, self.center)
 
-        return minutes, seconds
+        return m, s
