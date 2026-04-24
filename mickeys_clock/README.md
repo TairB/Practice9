@@ -17,4 +17,5 @@ python3 main.py
 ```python
 HAND_H = 170  # высота руки (уменьши если слишком длинные)
 HAND_W = 35   # ширина руки
-```
+also thats it
+``` 
